@@ -22,7 +22,7 @@ function NodeForm({
   });
 
   type nodeFormType = z.infer<typeof nodeFormSchema>;
-  const { handleSubmit, register } = useForm<nodeFormType>({
+  const { handleSubmit, register, reset } = useForm<nodeFormType>({
     resolver: zodResolver(nodeFormSchema),
     defaultValues: currentNode
       ? { ...currentNode.data, id: currentNode.id }
@@ -35,6 +35,8 @@ function NodeForm({
     } else {
       createNewNode(data);
     }
+
+    reset();
     closeDialog();
   };
 
@@ -47,7 +49,7 @@ function NodeForm({
     body,
   }: nodeFormType) => {
     const newNode: NodeType = {
-      id: id,
+      id: nanoid(),
       data: {
         label,
         method,
