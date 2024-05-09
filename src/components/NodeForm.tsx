@@ -2,11 +2,18 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { nanoid } from "nanoid";
-import useApiFlowStore from "../store";
-import { Node } from "reactflow";
-function NodeForm({ closeDialog }: { closeDialog: () => void }) {
+import useApiFlowStore, { NodeType } from "../store";
+
+function NodeForm({
+  closeDialog,
+  currentNode,
+}: {
+  closeDialog: () => void;
+  currentNode?: Omit<NodeType, "position">;
+}) {
   const { setNodes, nodes } = useApiFlowStore();
   const nodeFormSchema = z.object({
+    id: z.string(),
     label: z.string(),
     handleType: z.string(),
     endpoint: z.string(),
@@ -17,27 +24,37 @@ function NodeForm({ closeDialog }: { closeDialog: () => void }) {
   type nodeFormType = z.infer<typeof nodeFormSchema>;
   const { handleSubmit, register } = useForm<nodeFormType>({
     resolver: zodResolver(nodeFormSchema),
-    defaultValues: {
-      method: "post",
-      handleType: "default",
-    },
+    defaultValues: currentNode
+      ? { ...currentNode.data, id: currentNode.id }
+      : { method: "post", handleType: "default", id: nanoid() },
   });
 
-  const onSubmit = ({
+  const onSubmit = (data: nodeFormType) => {
+    if (currentNode) {
+      updateNodeInfo(currentNode.id, data);
+    } else {
+      createNewNode(data);
+    }
+    closeDialog();
+  };
+
+  const createNewNode = ({
+    id,
     endpoint,
     handleType,
     label,
     method,
     body,
   }: nodeFormType) => {
-    const newNode: Node = {
-      id: nanoid(),
+    const newNode: NodeType = {
+      id: id,
       data: {
         label,
         method,
         endpoint,
         body,
         handleType,
+        response: { data: {}, status: -1 },
       },
       type:
         handleType == "source"
@@ -47,9 +64,26 @@ function NodeForm({ closeDialog }: { closeDialog: () => void }) {
           : "customDefault",
       position: { x: 500, y: 500 },
     };
+
+    console.log(id, endpoint, handleType, label, method, body);
     setNodes([...nodes, newNode]);
-    closeDialog();
   };
+  const updateNodeInfo = (nodeId: string, data: nodeFormType) => {
+    const updatedNodes = nodes.map((node) => {
+      if (node.id === nodeId) {
+        return {
+          ...node,
+          data: {
+            ...node.data,
+            ...data,
+          },
+        };
+      }
+      return node;
+    });
+    setNodes(updatedNodes);
+  };
+
   return (
     <form
       onSubmit={handleSubmit(onSubmit)}
@@ -111,8 +145,11 @@ function NodeForm({ closeDialog }: { closeDialog: () => void }) {
           close
         </button>
 
-        <button className="px-2 py-1 rounded bg-violet-500 text-white">
-          Submit
+        <button
+          className="px-2 py-1 rounded bg-violet-500 text-white"
+          type="submit"
+        >
+          {currentNode ? "Update" : "Submit"}
         </button>
       </div>
     </form>

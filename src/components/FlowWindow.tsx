@@ -24,7 +24,7 @@ function FlowWindow() {
   const { nodes, edges, onEdgesChange, onNodesChange, onConnect } =
     useApiFlowStore();
   return (
-    <div className="h-screen w-full">
+    <div className="h-[95%] w-full border-2">
       <ReactFlow
         nodes={nodes}
         edges={edges}

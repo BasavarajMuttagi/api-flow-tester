@@ -1,19 +1,9 @@
-import { useRef } from "react";
 import NodeForm from "./NodeForm";
 import { Plus } from "@phosphor-icons/react";
+import useDialog from "../hooks/custom";
 
 function AddNewNode() {
-  const dialogRef = useRef<HTMLDialogElement>(null);
-
-  // Function to open the dialog
-  const openDialog = () => {
-    dialogRef.current?.showModal();
-  };
-
-  // Function to close the dialog
-  const closeDialog = () => {
-    dialogRef.current?.close();
-  };
+  const { closeDialog, openDialog, dialogRef } = useDialog();
 
   return (
     <div>

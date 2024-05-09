@@ -1,12 +1,15 @@
 import "./App.css";
 import FlowWindow from "./components/FlowWindow";
 import ToolBar from "./components/ToolBar";
+import { ReactFlowProvider } from "reactflow";
 
 function App() {
   return (
-    <div className="h-screen w-full p-4">
-      <ToolBar />
-      <FlowWindow />
+    <div className="h-screen space-y-2 p-5 w-full">
+      <ReactFlowProvider>
+        <ToolBar />
+        <FlowWindow />
+      </ReactFlowProvider>
     </div>
   );
 }

@@ -13,22 +13,34 @@ const checkFlowConnection = () => {
   const targetNode = getNodesOfType(nodes, "customTarget");
 
   if (sourceNode.length !== 1) {
+    console.log("source node length ", sourceNode.length);
     return false;
   }
 
   if (getOutgoers(sourceNode[0], nodes, edges).length !== 1) {
+    console.log(
+      "source outgoers ",
+      getOutgoers(sourceNode[0], nodes, edges).length
+    );
     return false;
   }
 
   if (targetNode.length !== 1) {
+    console.log("target node length ", targetNode.length);
     return false;
   }
 
   if (getIncomers(targetNode[0], nodes, edges).length !== 1) {
+    console.log(
+      "target incomers ",
+      getIncomers(targetNode[0], nodes, edges).length
+    );
     return false;
   }
 
   if (nodes.length - 1 !== edges.length) {
+    console.log("Edges not match ", nodes.length - 1, edges.length);
+
     return false;
   }
 

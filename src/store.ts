@@ -17,8 +17,17 @@ const storageModule = {
   storage: createJSONStorage(() => sessionStorage),
 };
 
+export type NodeType = Node<{
+  label: string;
+  endpoint: string;
+  method: string;
+  body: any;
+  handleType: string;
+  response: { data: object; status: number };
+}>;
+
 const creator = (set: any, get: any) => ({
-  nodes: [] as Node[],
+  nodes: [] as NodeType[],
   edges: [] as Edge[],
   onNodesChange: (changes: NodeChange[]) => {
     set({
