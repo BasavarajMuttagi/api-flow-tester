@@ -10,6 +10,7 @@ import apiClient from "../helpers/apiClient";
 import { useState } from "react";
 import { twMerge } from "tailwind-merge";
 import useApiFlowStore, { NodeType } from "../store";
+import { AxiosError } from "axios";
 
 function RunFlow() {
   const nodes = useApiFlowStore((state) => state.nodes);
@@ -67,7 +68,9 @@ function RunFlow() {
           setNodes(updatedNodes);
           executeNextApi(index + 1, updatedNodes);
         })
-        .catch(() => {
+        .catch((error: AxiosError) => {
+          const { response } = error;
+          console.log(response);
           const updatedNodes = nodes.map((eachNode) => {
             if (element.id === eachNode.id) {
               return {
@@ -75,7 +78,8 @@ function RunFlow() {
                 data: {
                   ...eachNode.data,
                   response: {
-                    status: 400,
+                    data: response?.data,
+                    status: response?.status || 400,
                   },
                 },
               };

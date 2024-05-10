@@ -23,6 +23,7 @@ export type NodeType = Node<{
   method: string;
   body: any;
   handleType: string;
+  expectedStatusCode: number;
   response: { data: object; status: number };
 }>;
 

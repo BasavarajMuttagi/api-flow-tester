@@ -18,15 +18,27 @@ function NodeForm({
     handleType: z.string(),
     endpoint: z.string(),
     method: z.string(),
-    body: z.any(),
+    status: z.number(),
+    body: z.string().default(""),
   });
 
   type nodeFormType = z.infer<typeof nodeFormSchema>;
   const { handleSubmit, register, reset } = useForm<nodeFormType>({
     resolver: zodResolver(nodeFormSchema),
     defaultValues: currentNode
-      ? { ...currentNode.data, id: currentNode.id }
-      : { method: "post", handleType: "default", id: nanoid() },
+      ? {
+          ...currentNode.data,
+          id: currentNode.id,
+          status: currentNode.data.expectedStatusCode,
+          body: currentNode.data.body,
+        }
+      : {
+          method: "get",
+          handleType: "default",
+          status: 200,
+          id: nanoid(),
+          body: "",
+        },
   });
 
   const onSubmit = (data: nodeFormType) => {
@@ -41,12 +53,12 @@ function NodeForm({
   };
 
   const createNewNode = ({
-    id,
     endpoint,
     handleType,
     label,
     method,
     body,
+    status,
   }: nodeFormType) => {
     const newNode: NodeType = {
       id: nanoid(),
@@ -56,6 +68,7 @@ function NodeForm({
         endpoint,
         body,
         handleType,
+        expectedStatusCode: status,
         response: { data: {}, status: -1 },
       },
       type:
@@ -67,7 +80,6 @@ function NodeForm({
       position: { x: 500, y: 500 },
     };
 
-    console.log(id, endpoint, handleType, label, method, body);
     setNodes([...nodes, newNode]);
   };
   const updateNodeInfo = (nodeId: string, data: nodeFormType) => {
@@ -126,6 +138,13 @@ function NodeForm({
         <div className="flex-nowrap shrink-0">Endpoint : </div>
         <input
           {...register("endpoint")}
+          className="px-2 py-1 rounded outline-none bg-neutral-50 border w-full text-zinc-600"
+        />
+      </div>
+      <div className="flex items-center space-x-3">
+        <div className="flex-nowrap shrink-0">Expected Status Code : </div>
+        <input
+          {...register("status")}
           className="px-2 py-1 rounded outline-none bg-neutral-50 border w-full text-zinc-600"
         />
       </div>
