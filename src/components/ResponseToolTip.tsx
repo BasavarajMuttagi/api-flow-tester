@@ -7,7 +7,7 @@ function ResponseToolTip({
   children: ReactNode;
 }) {
   return (
-    <div data-tooltip-id={id} className="self-end">
+    <div data-tooltip-id={id} >
       {children}
     </div>
   );

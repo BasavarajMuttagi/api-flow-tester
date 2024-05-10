@@ -5,7 +5,7 @@ import { ReactFlowProvider } from "reactflow";
 
 function App() {
   return (
-    <div className="h-screen space-y-2 p-5 w-full">
+    <div className="h-screen space-y-2 p-5 w-full bg-neutral-900">
       <ReactFlowProvider>
         <ToolBar />
         <FlowWindow />
